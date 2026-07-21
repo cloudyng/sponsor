@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sponsor</title>
+<style>
+:root{
+  --bg-canvas:#0d1117; --bg-default:#161b22; --border:#30363d;
+  --text:#c9d1d9; --muted:#8b949e; --btn:#21262d; --btn-border:#363b42;
+  --btn-hover:#30363d; --accent:#58a6ff; --green:#3fb950; --red:#f85149;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg-canvas); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  display:flex; justify-content:center; align-items:center; min-height:100vh;
+}
+.card{
+  background:var(--bg-canvas); border:1px solid var(--border); border-radius:6px;
+  width:90%; max-width:420px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,.5);
+  margin:20px 0;
+}
+.header{text-align:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border)}
+.header h1{font-size:24px; font-weight:600; margin:0 0 8px}
+.header p{color:var(--muted); font-size:14px; margin:0}
+.section-title{font-size:12px; font-weight:600; margin-bottom:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px}
+.link-btn{display:flex; justify-content:space-between; align-items:center; width:100%; background:var(--btn); color:var(--text); text-decoration:none; padding:12px 16px; border:1px solid var(--btn-border); border-radius:6px; margin-bottom:12px; font-weight:500; font-size:14px; transition:.2s; cursor:pointer}
+.link-btn:hover{background:var(--btn-hover); border-color:var(--muted)}
+.tag{color:var(--muted); font-size:12px}
+.bank-box{background:var(--bg-default); border:1px solid var(--border); border-radius:6px; padding:16px; margin-bottom:12px}
+.bank-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:14px}
+.bank-row:last-child{margin-bottom:0}
+.label{color:var(--muted)}
+.value{color:var(--text); font-weight:500}
+.code-block{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; background:rgba(110,118,129,.4); padding:2px 6px; border-radius:4px; font-size:13px}
+
+/* amount picker */
+.amount-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px}
+.amt-btn{background:var(--btn); border:1px solid var(--btn-border); color:var(--text); padding:14px; border-radius:6px; font-size:15px; font-weight:600; cursor:pointer; transition:.15s}
+.amt-btn:hover{background:var(--btn-hover); border-color:var(--muted)}
+.amt-btn.active{border-color:var(--accent); background:rgba(88,166,255,.12); color:var(--accent)}
+.input-group{display:flex; margin-bottom:16px}
+.input-group input{flex:1; background:var(--bg-canvas); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:6px 0 0 6px; outline:none; font-size:14px}
+.input-group input:focus{border-color:var(--accent)}
+.input-group input.active{border-color:var(--accent)}
+.currency{background:var(--border); color:var(--text); padding:10px 12px; border-radius:0 6px 6px 0; font-size:14px; display:flex; align-items:center}
+
+.qr-container{text-align:center; background:#fff; padding:16px; border-radius:6px; margin-bottom:16px}
+.qr-container img{width:100%; max-width:200px; height:auto}
+.primary-btn{width:100%; background:var(--accent); color:#0d1117; border:none; padding:12px; border-radius:6px; font-size:15px; font-weight:600; cursor:pointer; transition:.2s}
+.primary-btn:hover{filter:brightness(1.1)}
+.primary-btn:disabled{opacity:.4; cursor:not-allowed}
+.ghost-btn{width:100%; background:transparent; color:var(--muted); border:1px solid var(--border); padding:10px; border-radius:6px; font-size:14px; cursor:pointer; margin-top:10px; transition:.2s}
+.ghost-btn:hover{background:var(--btn); color:var(--text)}
+.hide{display:none !important}
+
+.wait-box{text-align:center; padding:8px 0}
+.spinner{width:48px; height:48px; margin:0 auto 20px; border:4px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.timer{font-family:ui-monospace,monospace; font-size:32px; font-weight:600; margin:8px 0}
+.wait-info{color:var(--muted); font-size:13px; margin-top:12px; line-height:1.5}
+.amount-badge{font-size:20px; font-weight:600; color:var(--accent); margin-bottom:4px}
+
+.result{text-align:center; padding:12px 0}
+.icon-circle{width:72px; height:72px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:40px}
+.icon-success{background:rgba(63,185,80,.15); color:var(--green); animation:pop .4s ease}
+.icon-fail{background:rgba(248,81,73,.15); color:var(--red); animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(.5); opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1); opacity:1}}
+.result h2{font-size:22px; margin:0 0 8px}
+.result p{color:var(--muted); font-size:14px; margin:0 0 20px; line-height:1.6}
+.receipt{background:var(--bg-default); border:1px solid var(--border); border-radius:6px; padding:16px; margin-bottom:20px; text-align:left}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ============ SCREEN 1: PICK AMOUNT ============ -->
+  <div id="screen-form">
+    <div class="header">
+      <h1>Sponsor</h1>
+      <p>donate me if u want</p>
+    </div>
+
+    <div class="section-title">Global Methods</div>
+    <a href="https://paypal.me/ncatuong213" target="_blank" class="link-btn">
+      <span>PayPal</span><span class="tag">@ncatuong213</span>
+    </a>
+    <a href="https://ko-fi.com/zenslab" target="_blank" class="link-btn">
+      <span>Ko-fi</span><span class="tag">Visa / Mastercard</span>
+    </a>
+
+    <div class="section-title" style="margin-top:24px">Vietnam — Chọn số tiền</div>
+    <div class="amount-grid">
+      <button class="amt-btn" data-amt="10000"  onclick="pickPreset(this)">10.000 ₫</button>
+      <button class="amt-btn" data-amt="100000" onclick="pickPreset(this)">100.000 ₫</button>
+    </div>
+    <div class="input-group">
+      <input type="number" id="amount" placeholder="Hoặc nhập số tiền khác..." oninput="pickCustom()">
+      <span class="currency">VND</span>
+    </div>
+
+    <button class="primary-btn" id="continue-btn" onclick="goPay()" disabled>Tiếp tục</button>
+
+    <a href="https://me.momo.vn/ncatt" target="_blank" class="link-btn" style="margin-top:12px">
+      <span>MoMo</span><span class="tag">@ncatt</span>
+    </a>
+  </div>
+
+  <!-- ============ SCREEN 2: QR + CONTENT + WAIT ============ -->
+  <div id="screen-wait" class="hide">
+    <div class="header">
+      <h1>Quét mã để chuyển</h1>
+      <p>VietQR — MB Bank</p>
+    </div>
+
+    <div class="qr-container">
+      <img id="qr-img" src="" alt="VietQR">
+    </div>
+
+    <div class="bank-box">
+      <div class="bank-row"><span class="label">Số tiền</span><span class="value amount-badge" style="font-size:16px" id="wait-amount">0 ₫</span></div>
+      <div class="bank-row"><span class="label">Nội dung CK</span><span class="value code-block" id="wait-content">Donate</span></div>
+      <div class="bank-row"><span class="label">Chủ tài khoản</span><span class="value">Nguyen Van Ut</span></div>
+      <div class="bank-row"><span class="label">Số tài khoản</span><span class="value code-block">00949917961</span></div>
+    </div>
+
+    <div class="wait-box">
+      <div class="spinner"></div>
+      <div class="label" style="font-size:13px">Đang chờ xác nhận thanh toán…</div>
+      <div class="timer" id="timer">05:00</div>
+      <div class="wait-info">Nhập <b>đúng nội dung</b> ở trên khi chuyển để hệ thống nhận diện tự động. Đừng đóng trang này.</div>
+      <button class="ghost-btn" onclick="cancelWaiting()">Hủy</button>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3: SUCCESS ============ -->
+  <div id="screen-success" class="hide">
+    <div class="result">
+      <div class="icon-circle icon-success">✓</div>
+      <h2>Cảm ơn bạn rất nhiều!</h2>
+      <p>Khoản donate của bạn đã được nhận thành công.<br>Sự ủng hộ của bạn có ý nghĩa lớn với mình 💙</p>
+      <div class="receipt">
+        <div class="bank-row"><span class="label">Số tiền</span><span class="value" id="ok-amount">—</span></div>
+        <div class="bank-row"><span class="label">Nội dung</span><span class="value code-block" id="ok-content">Donate</span></div>
+        <div class="bank-row"><span class="label">Thời gian</span><span class="value" id="ok-time">—</span></div>
+        <div class="bank-row"><span class="label">Mã giao dịch</span><span class="value code-block" id="ok-txid">—</span></div>
+      </div>
+      <button class="primary-btn" onclick="reset()">Xong</button>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 4: FAILED ============ -->
+  <div id="screen-failed" class="hide">
+    <div class="result">
+      <div class="icon-circle icon-fail">✕</div>
+      <h2>Chưa nhận được thanh toán</h2>
+      <p id="fail-msg">Đã hết thời gian chờ và hệ thống chưa ghi nhận giao dịch của bạn.</p>
+      <div class="receipt">
+        <div class="bank-row"><span class="label">Trạng thái</span><span class="value" style="color:var(--red)">Quá thời gian</span></div>
+        <div class="bank-row"><span class="label">Số tiền</span><span class="value" id="fail-amount">—</span></div>
+        <div class="wait-info" style="margin-top:8px">Nếu bạn đã chuyển thành công, tiền vẫn tới nơi an toàn — chỉ là hệ thống chưa kịp nhận diện.</div>
+      </div>
+      <button class="primary-btn" onclick="retry()">Kiểm tra lại</button>
+      <button class="ghost-btn" onclick="reset()">Quay về</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===================== CẤU HÌNH ===================== */
+const BANK_ID="MB", ACCOUNT="00949917961", ACC_NAME="Nguyen Van Ut";
+const TIMEOUT_S=5*60, POLL_MS=4000;
+const API_BASE="https://your-worker.your-subdomain.workers.dev"; // <-- đổi thành URL Worker của bạn
+
+let payAmount=0, payContent="Donate", timeLeft=TIMEOUT_S, timerInt=null, pollInt=null;
+
+/* ===================== CHỌN SỐ TIỀN ===================== */
+function pickPreset(btn){
+  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('amount').value="";
+  document.getElementById('amount').classList.remove('active');
+  payAmount=parseInt(btn.dataset.amt);
+  document.getElementById('continue-btn').disabled=false;
+}
+function pickCustom(){
+  const inp=document.getElementById('amount');
+  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('active'));
+  const v=parseInt(inp.value)||0;
+  payAmount=v;
+  inp.classList.toggle('active', v>0);
+  document.getElementById('continue-btn').disabled = v<=0;
+}
+
+/* ===================== QR + NỘI DUNG ===================== */
+function goPay(){
+  if(payAmount<=0) return;
+  payContent="DONATE"+Date.now().toString().slice(-6); // mã đối soát riêng
+  const url=`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT}-compact2.png?accountName=${encodeURIComponent(ACC_NAME)}&amount=${payAmount}&addInfo=${encodeURIComponent(payContent)}`;
+  document.getElementById('qr-img').src=url;
+  document.getElementById('wait-amount').textContent=payAmount.toLocaleString('vi-VN')+" ₫";
+  document.getElementById('wait-content').textContent=payContent;
+
+  show('screen-wait');
+  startWaiting();
+}
+
+function startWaiting(){
+  timeLeft=TIMEOUT_S;
+  tick();
+  timerInt=setInterval(tick,1000);
+  pollInt =setInterval(checkPayment,POLL_MS);
+}
+function tick(){
+  const m=String(Math.floor(timeLeft/60)).padStart(2,'0');
+  const s=String(timeLeft%60).padStart(2,'0');
+  document.getElementById('timer').textContent=`${m}:${s}`;
+  if(timeLeft<=0){ stopTimers(); onFailed("timeout"); return; }
+  timeLeft--;
+}
+function cancelWaiting(){ stopTimers(); reset(); }
+function stopTimers(){ clearInterval(timerInt); clearInterval(pollInt); }
+
+/* ===================== NHẬN DIỆN TIỀN VÀO (SePay qua Cloudflare Worker) =====
+ * Worker đọc webhook SePay, lưu Upstash Redis theo mã DONATE######,
+ * rồi trả { paid:true, txid, amount } khi frontend hỏi.
+ * ========================================================================= */
+async function checkPayment(){
+  try{
+    const r = await fetch(`${API_BASE}/api/check?content=${encodeURIComponent(payContent)}&amount=${payAmount}`);
+    const d = await r.json();
+    if(d.paid){ stopTimers(); onSuccess(d.txid || "SEPAY"); }
+  }catch(e){ /* mạng lỗi tạm thời — lần poll sau thử lại */ }
+}
+
+/* ===================== KẾT QUẢ ===================== */
+function onSuccess(txid){
+  document.getElementById('ok-amount').textContent=payAmount.toLocaleString('vi-VN')+" ₫";
+  document.getElementById('ok-content').textContent=payContent;
+  document.getElementById('ok-time').textContent=new Date().toLocaleString('vi-VN');
+  document.getElementById('ok-txid').textContent=txid;
+  show('screen-success');
+}
+function onFailed(reason){
+  document.getElementById('fail-amount').textContent=payAmount.toLocaleString('vi-VN')+" ₫";
+  document.getElementById('fail-msg').textContent =
+    reason==="timeout"
+      ? "Đã hết thời gian chờ và hệ thống chưa ghi nhận giao dịch của bạn."
+      : "Hệ thống chưa ghi nhận giao dịch của bạn.";
+  show('screen-failed');
+}
+
+/* ===================== ĐIỀU HƯỚNG ===================== */
+function retry(){ show('screen-wait'); startWaiting(); }
+function reset(){
+  stopTimers();
+  document.getElementById('amount').value="";
+  document.getElementById('amount').classList.remove('active');
+  document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('continue-btn').disabled=true;
+  payAmount=0; payContent="Donate";
+  show('screen-form');
+}
+function show(id){
+  ['screen-form','screen-wait','screen-success','screen-failed']
+    .forEach(s=>document.getElementById(s).classList.add('hide'));
+  document.getElementById(id).classList.remove('hide');
+}
+</script>
+</body>
+</html>
