@@ -6,5 +6,5 @@ compatibility_date = "2025-01-01"
 # Tạo bằng: npx wrangler kv namespace create DONATIONS
 # rồi dán id trả về vào dưới đây.
 [[kv_namespaces]]
-binding = "DONATIONS"
-id = "<paste-kv-namespace-id-vào-đây>"
+binding = "donation"
+id = "9398abf354054c488b4517e5f181dd66"
