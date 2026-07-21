@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Cloudflare / Wrangler
+.wrangler/
+.dev.vars          # secret khi test local — KHÔNG commit
+wrangler.toml.bak
+
+# Env & secrets
+.env
+.env.*
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
