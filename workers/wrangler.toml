@@ -1,0 +1,10 @@
+name = "sepay-worker"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# KV namespace lưu giao dịch donate.
+# Tạo bằng: npx wrangler kv namespace create DONATIONS
+# rồi dán id trả về vào dưới đây.
+[[kv_namespaces]]
+binding = "DONATIONS"
+id = "<paste-kv-namespace-id-vào-đây>"
